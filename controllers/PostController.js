@@ -19,7 +19,31 @@ export const getLastTags = async (req, res) => {
 
 export const getAll = async (req, res) => {
   try {
-    const posts = await PostModel.find().populate("user").exec();
+    const posts =await PostModel.aggregate([
+      {
+        $lookup:{
+          from:'comments',
+          localField:'_id',
+          foreignField:'post',
+          as:'comments'
+        },
+      },
+      {
+        $addFields:{
+          commentsCount:{$size:'$comments'},
+        },
+      },
+      {
+        $project:{
+          comments:0
+        },
+      },
+    ])
+    
+    
+    
+    
+    await PostModel.populate(posts,{path:'user',select:'fullName avatarUrl'})
 
     res.json(posts);
   } catch (err) {
