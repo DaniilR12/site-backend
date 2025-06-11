@@ -8,7 +8,7 @@ import {
   postCreateValidation,
 } from "./validations.js";
 import { checkAuth, handleValidationErrors } from "./utils/index.js";
-import { UserController, PostController } from "./controllers/index.js";
+import { UserController, PostController, CommentController } from "./controllers/index.js";
 import cors from "cors";
 import dotenv from 'dotenv';
 
@@ -75,6 +75,10 @@ app.patch("/posts/:id",
   handleValidationErrors,
   PostController.update
 );
+
+app.post('/posts/:id',checkAuth, CommentController.createComment)
+
+app.get('/posts/:id/comments',CommentController.getPostComments)
 
 app.listen(process.env.PORT||4444, (err) => {
   if (err) {
